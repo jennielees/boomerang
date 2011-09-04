@@ -12,7 +12,7 @@ ObjectId = Schema.ObjectId;
 
 require('./models.js');
 Message = mongoose.model('Message');
-
+Person  = mongoose.model('Person');
 
 // now we have the db model
 // authenticate with tweeter
@@ -44,11 +44,9 @@ var twit = new twitter({
 
 twit.get('/direct_messages.json', {include_entities:false}, function(data) {
 
-   for (var dm in data) {
-      storeTweet(dm);
-      
-   }
-   
+   data.forEach(function (message){
+      storeTweet(message);
+   });
    
 });
 
@@ -62,13 +60,60 @@ twit.get('/direct_messages.json', {include_entities:false}, function(data) {
 //getTwitterRequestToken();
 
 var storeTweet = function(tweet) {
+   checkAuthor(tweet.sender_screen_name, tweet.sender.name, tweet);
    
    var from = tweet.sender_screen_name;
    var text = tweet.text;
+   var date = tweet.created_at;
    
-   sys.puts(from + text);
+   sys.puts(from + " said: " + text + ", at " + date);
    
-}
+};
+
+var checkAuthor = function (twitterhandle, name, tweet) {
+   Person.findOne({ twitter: twitterhandle }, function(err, doc) {
+      if (doc == null) {
+         sys.puts("Person does not exist yet");
+         person = new Person();
+         person.twitter = twitterhandle;
+         person.name = name;
+         person.save(function(err) {
+            if (err) {
+               sys.puts("Error saving person " + name);
+               sys.puts(err);
+               // Probably cause they already got saved this session so we know the ID...
+               insertTweet(person._id, tweet); 
+            } else {
+               insertTweet(person._id, tweet); 
+            };
+         });
+      } else {
+         insertTweet(doc._id, tweet);
+      }
+   });
+      
+};
+
+var insertTweet = function(id, tweet) {
+   message = new Message();
+   message.text = tweet.text;
+   message.date = tweet.created_at;
+   message.author = id;
+   sys.puts(message.author);
+   message.source = "twitter";
+   message.sourceID = tweet.id_str;
+   sys.puts(sys.inspect(message));
+   message.save(function(err) {
+         if(err) {
+            sys.puts("Error saving message! It's probably already in the database.");
+            sys.puts(err);
+         } else {
+            sys.puts("Save success! A+");
+         }
+      });
+
+};
+
 
 /**
  * Module dependencies.

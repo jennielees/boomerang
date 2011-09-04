@@ -26,14 +26,14 @@ var EndUserSchema = new Schema({
 var PersonSchema = new Schema({
 //	_id : built-in
 	name 	 : String
- ,	twitter  : String
+ ,	twitter  : { type: String, unique : true} // unique index removed for now, didn't translate to db properly
  ,	enabled  : Boolean
- , 	date	 : Date // creation date
+ , 	date	 : { type: Date, default: Date.now }// creation date
  , 	username : String
  , 	password : String // hash
- , 	relative : [EndUserSchema]
+ , 	avatarURL : String // URL to avatar
+ , 	relative : ObjectId // EndUser
 });
-// Note, array relationship due to Mongoose hack, may need to revert to ObjectId
 
 
 /*
@@ -44,11 +44,12 @@ var PersonSchema = new Schema({
 
 var MessageSchema = new Schema({
 //	_id : built-in
-	text    : String
- ,	source  : String
- ,	author  : [PersonSchema]
- , 	date    : Date
- , 	read    : Date
+	text     : String
+ ,	source   : String
+ , 	sourceID : {type: String, unique: true }
+ ,	author   : ObjectId // Person
+ , 	date     : Date
+ , 	read     : Date
 });
 
 
@@ -63,7 +64,7 @@ var ImageSchema = new Schema({
 //	_id : built-in
 	binary   : Buffer
  , 	external : String
- , 	message  : [MessageSchema]
+ , 	message  : ObjectId // Message
  , 	name 	 : String
  , 	date	 : Date
 });

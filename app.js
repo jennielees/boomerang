@@ -77,11 +77,13 @@ var checkAuthor = function (twitterhandle, name, tweet) {
          person = new Person();
          person.twitter = twitterhandle;
          person.name = name;
+         person.avatarURL = tweet.sender.profile_image_url;
          person.save(function(err) {
             if (err) {
                sys.puts("Error saving person " + name);
                sys.puts(err);
                // Probably cause they already got saved this session so we know the ID...
+               // FIXME
                insertTweet(person._id, tweet); 
             } else {
                insertTweet(person._id, tweet); 

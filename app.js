@@ -1,6 +1,6 @@
 var sys = require('sys');
-
 var OAuth= require('./lib/oauth').OAuth;
+var journey = require('journey');
 
 mongoose = require('mongoose');
 // we can't use var as we are including the model definitions: scope!
@@ -42,30 +42,25 @@ var twit = new twitter({
     access_token_secret: betty_oauth_secret
 });
 
-twit.get('/direct_messages.json', {include_entities:false}, function(data) {
+var isTwitterEnabled = false;
 
-   data.forEach(function (message){
-      storeTweet(message);
+if (isTwitterEnabled) {
+   twit.get('/direct_messages.json', {include_entities:false}, function(data) {
+      data.forEach(function (message){
+         storeTweet(message);
+      });
    });
-   
-});
+}
 
-// part 2: streaming data
+// TODO! part 2: streaming data and auto follow events
 
-
-// next step: PUT THEM IN DB
-
-//sign into twitter at twitter.com, and come back to the app
-
-//getTwitterRequestToken();
 
 var storeTweet = function(tweet) {
    checkAuthor(tweet.sender_screen_name, tweet.sender.name, tweet);
-   
+   // TODO Refactor this to be asynch
    var from = tweet.sender_screen_name;
    var text = tweet.text;
    var date = tweet.created_at;
-   
    sys.puts(from + " said: " + text + ", at " + date);
    
 };
@@ -98,7 +93,7 @@ var checkAuthor = function (twitterhandle, name, tweet) {
 
 var insertTweet = function(id, tweet) {
    message = new Message();
-   message.text = tweet.text;
+   message.text = parseImages(tweet.text, message._id);
    message.date = tweet.created_at;
    message.author = id;
    sys.puts(message.author);
@@ -115,6 +110,37 @@ var insertTweet = function(id, tweet) {
       });
 
 };
+
+var unshortener = require('unshortener');
+
+var parseImages = function(messageString, messageId) {
+   // http://twitpic.com/show/large/1flrp
+   var ret = [];
+   var match;
+   // sigh, expand t.co...
+   var tco = /(http:\/\/(t.co|bit.ly)\/[a-zA-Z0-9]+)/g;
+   var twitpic = /(http:\/\/twitpic.com\/[a-zA-Z0-9]+)/g;
+   while ( match = tco.exec(messageString) ) {
+      var shorturl = match[1];
+      // TODO - need a test that will check multiple messages
+      sys.puts("Found a short url: " + match[1]);
+      unshortener.expand(shorturl, function (url) {
+         sys.puts(sys.inspect(url));
+         ret.push({'longurl': url.href, 'shorturl': shorturl});
+      });
+   }
+   sys.puts(sys.inspect(ret));
+   // look for a twitpic URL
+   
+   // redirect to AWS URL
+  return messageString; 
+};
+
+// Test
+
+var testMultipleString = "Here is some text. http://bit.ly/perfectedu http://t.co/GC2LuPj http://t.co/4gYS9f9";
+var testMultipleTco = parseImages(testMultipleString, 0);
+sys.puts(testMultipleTco);
 
 
 /**
@@ -172,6 +198,13 @@ var getTwitterAccessToken = function(req, res){
 
 
 
+// Journey : A HTTP JSON router
+
+// https://github.com/cloudhead/journey
+
+var router = new(journey.Router);
+
+
 
 // Configuration
 
@@ -200,6 +233,14 @@ app.get('/', function(req, res){
   });
 });
 
+app.get('/debug', function(req, res){
+   Message.find({}, function(err, docs) {      
+      res.render('debug', {
+         title: "Debug",
+         data : docs
+      });
+   });
+});
 
 app.get('/getTwitterRequestToken', function(req, res){
   getTwitterRequestToken(req, res);
@@ -207,6 +248,20 @@ app.get('/getTwitterRequestToken', function(req, res){
 
 app.get('/getTwitterAccessToken', function(req, res){
   getTwitterAccessToken(req, res);
+});
+
+// http serving in here for now
+app.get('/getMessages', function(req, res) {
+   var clientID = req.params.id;
+   var endPIN   = req.params.pin;
+   // later we will actually check this ^_^
+   
+   // find all messages for this user
+   // right now this is.. all messages ^_^
+   // Message.find(author.relative.devicePIN)
+   Message.find({}, function(err, docs) {
+      res.json(docs);
+   });   
 });
 
 

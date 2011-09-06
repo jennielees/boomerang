@@ -64,12 +64,19 @@ var ImageSchema = new Schema({
 //	_id : built-in
 	binary   : Buffer
  , 	external : String
+ , 	externalThumbnal : String
  , 	message  : ObjectId // Message
  , 	name 	 : String
  , 	date	 : Date
 });
 
 
+
+var PhoneSchema = new Schema({
+	clientID  : String // Device ID
+ ,	authToken : String // ClientLogin token
+ , 	endPIN 	  : String // User specific PIN. Check v enduser.
+});
 
 mongoose.model('EndUser', EndUserSchema);
 mongoose.model('Person', PersonSchema);

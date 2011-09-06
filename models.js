@@ -62,9 +62,9 @@ var MessageSchema = new Schema({
 
 var ImageSchema = new Schema({
 //	_id : built-in
-	binary   : Buffer
- , 	external : String
- , 	externalThumbnal : String
+// 	binary   : Buffer // Removed local binary for now due to JS handling
+  	external : String
+ , 	externalThumbnail : String
  , 	message  : ObjectId // Message
  , 	name 	 : String
  , 	date	 : Date

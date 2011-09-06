@@ -13,6 +13,7 @@ ObjectId = Schema.ObjectId;
 require('./models.js');
 Message = mongoose.model('Message');
 Person  = mongoose.model('Person');
+Image  = mongoose.model('Image');
 
 // now we have the db model
 // authenticate with tweeter
@@ -42,7 +43,7 @@ var twit = new twitter({
     access_token_secret: betty_oauth_secret
 });
 
-var isTwitterEnabled = false;
+var isTwitterEnabled = true; //debug hack
 
 if (isTwitterEnabled) {
    twit.get('/direct_messages.json', {include_entities:false}, function(data) {
@@ -92,54 +93,95 @@ var checkAuthor = function (twitterhandle, name, tweet) {
 };
 
 var insertTweet = function(id, tweet) {
-   message = new Message();
-   message.text = parseImages(tweet.text, message._id);
-   message.date = tweet.created_at;
-   message.author = id;
-   sys.puts(message.author);
-   message.source = "twitter";
-   message.sourceID = tweet.id_str;
-   sys.puts(sys.inspect(message));
-   message.save(function(err) {
-         if(err) {
-            sys.puts("Error saving message! It's probably already in the database.");
-            sys.puts(err);
-         } else {
-            sys.puts("Save success! A+");
-         }
-      });
-
+   var message = new Message();
+   parseImages(tweet.text, message._id, tweet, function(url, tweet) {
+      // awesome, the callback works!
+      // url is each url, we have to modify this into a single callback for every tweet, fixing the parseImages function
+      message.text = tweet.text;
+      message.date = tweet.created_at;
+      message.author = id;
+      sys.puts(message.author);
+      message.source = "twitter";
+      message.sourceID = tweet.id_str;
+      sys.puts(sys.inspect(message));
+      message.save(function(err) {
+            if(err) {
+               sys.puts("Error saving message! It's probably already in the database.");
+               sys.puts(err);
+            } else {
+               // do the image; we want this to happen only if the tweet is saved, dupes
+               if (url) { linkImage(message, url); }
+               sys.puts("Save success! A+");
+            }
+         });
+   });
 };
+
+var linkImage = function(message, url) {
+   var image = new Image();
+  // image.text = message.text;
+   // t
+   //var twitpics = s/http:\/\/twitpic.com\/([a-zA-Z0-9]+)/http:\/\/twitpic.com/show/large//g;
+   var urlslug = /http:\/\/twitpic.com\/([a-zA-Z0-9]+)/g;
+   match = urlslug.exec(url);
+   if (match) {
+      sys.puts("Twitpic found: " + match);
+      url = "http://twitpic.com/show/large/" + match[1];
+      thumburl = "http://twitpic.com/show/thumb/" + match[1];
+      image.text = message.text;
+      image.external = url;
+      image.externalThumbnail = thumburl;
+      message = message._id;
+      image.save(function(err) {
+            if (err) {
+               sys.puts("Error saving image. Sadface :(");
+               sys.puts(err);
+            } else {
+               sys.puts("Success linking to image! " + url);
+            }
+      });
+   }
+   sys.puts(url); 
+};
+
+// test
+//linkImage("foobar", "http://twitpic.com/abcdef");
+//linkImage("foobar", "http://flickr.com/abcdef");
 
 var unshortener = require('unshortener');
 
-var parseImages = function(messageString, messageId) {
+var parseImages = function(messageString, messageId, tweet, callback) {
    // http://twitpic.com/show/large/1flrp
-   var ret = [];
    var match;
+   var ret = [];
    // sigh, expand t.co...
    var tco = /(http:\/\/(t.co|bit.ly)\/[a-zA-Z0-9]+)/g;
-   var twitpic = /(http:\/\/twitpic.com\/[a-zA-Z0-9]+)/g;
-   while ( match = tco.exec(messageString) ) {
+   match = tco.exec(messageString);
+   if (match) {
       var shorturl = match[1];
       // TODO - need a test that will check multiple messages
       sys.puts("Found a short url: " + match[1]);
       unshortener.expand(shorturl, function (url) {
          sys.puts(sys.inspect(url));
+         // need to push saving into this callback
          ret.push({'longurl': url.href, 'shorturl': shorturl});
+         callback(url.href, tweet);
       });
-   }
-   sys.puts(sys.inspect(ret));
+   } else {
+     callback(null, tweet); 
+   };
    // look for a twitpic URL
    
    // redirect to AWS URL
-  return messageString; 
 };
 
 // Test
 
-var testMultipleString = "Here is some text. http://bit.ly/perfectedu http://t.co/GC2LuPj http://t.co/4gYS9f9";
-var testMultipleTco = parseImages(testMultipleString, 0);
+var testMultipleString = "Here is some text. http://t.co/GC2LuPj http://t.co/4gYS9f9";
+var testMultipleTco = parseImages(testMultipleString, 0, "foo", function(url, tweet) {
+   sys.puts(url);
+   sys.puts(tweet);
+  });
 sys.puts(testMultipleTco);
 
 
@@ -259,9 +301,14 @@ app.get('/getMessages', function(req, res) {
    // find all messages for this user
    // right now this is.. all messages ^_^
    // Message.find(author.relative.devicePIN)
+   // Can't do joins in mongodb (why using nosql again?!) so deferring
+   // can eventually do this via retrieving the ObjectID the  hard way
    Message.find({}, function(err, docs) {
-      res.json(docs);
-   });   
+      var messages = docs;
+      Image.find({}, function(err, docs) {
+         res.json({ "messages" : messages, "images" : docs });
+      });
+   });
 });
 
 

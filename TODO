@@ -1,0 +1,8 @@
+* streaming api
+* c2dm flow
+* multiple images
+  - and de-duping
+* dealing with the uniqueness constraint
+* http call
+  - mixed media
+  - auth

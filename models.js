@@ -15,8 +15,6 @@ var EndUserSchema = new Schema({
   
 });
 
-
-
 /* Schema for people.
    Most subject to change.
    Will use a lookup on messages by author to find a person's messages.
@@ -35,7 +33,6 @@ var PersonSchema = new Schema({
  , 	relative : ObjectId // EndUser
 });
 
-
 /*
   Schema for basic messages.
   Supports primarily author plus text, with date fields for
@@ -47,11 +44,12 @@ var MessageSchema = new Schema({
 	text     : String
  ,	source   : String
  , 	sourceID : {type: String, unique: true }
- ,	author   : ObjectId // Person
+ //,	authorID   : ObjectId // Person
  , 	date     : Date
  , 	read     : Date
+ , 	author   : { name : String, twitter: String }
+ , 	images   : [ImageSchema]
 });
-
 
 /*
    Schema for Image entries.
@@ -69,8 +67,6 @@ var ImageSchema = new Schema({
  , 	name 	 : String
  , 	date	 : Date
 });
-
-
 
 var PhoneSchema = new Schema({
 	clientID  : String // Device ID

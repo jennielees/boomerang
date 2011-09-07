@@ -57,7 +57,8 @@ if (isTwitterEnabled) {
 
 
 var storeTweet = function(tweet) {
-   checkAuthor(tweet.sender_screen_name, tweet.sender.name, tweet);
+//   checkAuthor(tweet.sender_screen_name, tweet.sender.name, tweet);
+   insertTweet("Fakeout", tweet);
    // TODO Refactor this to be asynch
    var from = tweet.sender_screen_name;
    var text = tweet.text;
@@ -99,10 +100,12 @@ var insertTweet = function(id, tweet) {
       // url is each url, we have to modify this into a single callback for every tweet, fixing the parseImages function
       message.text = tweet.text;
       message.date = tweet.created_at;
-      message.author = id;
+  //    message.authorID = id;
       sys.puts(message.author);
       message.source = "twitter";
       message.sourceID = tweet.id_str;
+      message.author.twitter = tweet.sender.screen_name;
+      message.author.name = tweet.sender.name;
       sys.puts(sys.inspect(message));
       message.save(function(err) {
             if(err) {
@@ -131,13 +134,16 @@ var linkImage = function(message, url) {
       image.text = message.text;
       image.external = url;
       image.externalThumbnail = thumburl;
-      message = message._id;
+      image.message = message._id;
       image.save(function(err) {
             if (err) {
                sys.puts("Error saving image. Sadface :(");
                sys.puts(err);
             } else {
                sys.puts("Success linking to image! " + url);
+               // Link back - inefficient! FIXME
+               message.images.push(image);
+               message.save();
             }
       });
    }
@@ -303,14 +309,16 @@ app.get('/getMessages', function(req, res) {
    // Message.find(author.relative.devicePIN)
    // Can't do joins in mongodb (why using nosql again?!) so deferring
    // can eventually do this via retrieving the ObjectID the  hard way
+   // nest in the IDs
    Message.find({}, function(err, docs) {
-      var messages = docs;
-      Image.find({}, function(err, docs) {
-         res.json({ "messages" : messages, "images" : docs });
+  //    var messages = docs;
+//      Image.find({}, function(err, docs) {
+         res.json(docs);
+//         res.json({ "messages" : messages, "images" : docs });
       });
    });
 });
 
 
-app.listen(3000);
+app.listen(3456);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

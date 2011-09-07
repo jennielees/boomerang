@@ -246,13 +246,35 @@ var getTwitterAccessToken = function(req, res){
 
 
 
-// Journey : A HTTP JSON router
+twit.stream('user', {track:'nodejs'}, function(stream) {
+    stream.on('data', function (data) {
+      //  sys.puts(sys.inspect(data));
+        // look for follow event
+        if (data.event == "follow") {
+            follower = data.source.screen_name;
+        };
+        
+        
+        // look for DM event
+        if (data.direct_message) {
+            // DM
+          // sys.puts(sys.inspect(data.direct_message));
+           // this crashes everything, but why?
+           tweet = data.direct_message;
+           sys.puts("Text: " + tweet.text);
+           storeTweet(tweet);
+         
+        }
+    });
+    // Disconnect stream after five seconds
+    setTimeout(stream.destroy, 500000);
+});
 
+
+// Journey : A HTTP JSON router
 // https://github.com/cloudhead/journey
 
-var router = new(journey.Router);
-
-
+//var router = new(journey.Router);
 
 // Configuration
 
@@ -315,7 +337,6 @@ app.get('/getMessages', function(req, res) {
 //      Image.find({}, function(err, docs) {
          res.json(docs);
 //         res.json({ "messages" : messages, "images" : docs });
-      });
    });
 });
 

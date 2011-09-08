@@ -336,6 +336,7 @@ app.post('/setClientToken', function(req, res) {
    device.clientID = req.body.clientID;
    device.authToken = req.body.authToken;
    device.PIN = req.body.PIN;
+   device.registration_id = req.body.registration_id;
    device.save(function(err) { sys.puts("Error " + sys.inspect(err)) });
    res.send("OK\n"); //make a proper return code
 });

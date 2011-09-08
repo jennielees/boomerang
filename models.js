@@ -71,6 +71,7 @@ var ImageSchema = new Schema({
 var PhoneSchema = new Schema({
 	clientID  : String // Device ID
  ,	authToken : String // ClientLogin token
+ ,	registration_id : String // ClientLogin id
  , 	PIN 	  : String // User specific PIN. Check v enduser.
 });
 

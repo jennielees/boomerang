@@ -14,6 +14,7 @@ require('./models.js');
 Message = mongoose.model('Message');
 Person  = mongoose.model('Person');
 Image  = mongoose.model('Image');
+Phone = mongoose.model('Phone');
 
 // now we have the db model
 // authenticate with tweeter
@@ -324,10 +325,26 @@ app.get('/getTwitterAccessToken', function(req, res){
   getTwitterAccessToken(req, res);
 });
 
+app.use(express.bodyParser());
+
+//  Get ID from the client device
+app.post('/setClientToken', function(req, res) {
+   sys.puts(req.body.clientID);
+   sys.puts(req.body.authToken);
+   sys.puts(req.body.PIN);
+   device = new Phone();
+   device.clientID = req.body.clientID;
+   device.authToken = req.body.authToken;
+   device.PIN = req.body.PIN;
+   device.save(function(err) { sys.puts("Error " + sys.inspect(err)) });
+   res.send("OK\n"); //make a proper return code
+});
+
+
 // http serving in here for now
 app.get('/getMessages', function(req, res) {
    var clientID = req.params.id;
-   var endPIN   = req.params.pin;
+   var PIN   = req.params.pin;
    // later we will actually check this ^_^
    
    // find all messages for this user

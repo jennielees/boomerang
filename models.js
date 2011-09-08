@@ -71,11 +71,11 @@ var ImageSchema = new Schema({
 var PhoneSchema = new Schema({
 	clientID  : String // Device ID
  ,	authToken : String // ClientLogin token
- , 	endPIN 	  : String // User specific PIN. Check v enduser.
+ , 	PIN 	  : String // User specific PIN. Check v enduser.
 });
 
 mongoose.model('EndUser', EndUserSchema);
 mongoose.model('Person', PersonSchema);
 mongoose.model('Image', ImageSchema);
 mongoose.model('Message', MessageSchema);
-
+mongoose.model('Phone', PhoneSchema);

@@ -252,6 +252,10 @@ twit.stream('user', {track:'nodejs'}, function(stream) {
         // look for follow event
         if (data.event == "follow") {
             follower = data.source.screen_name;
+            //
+            twit.post('/friendships/create.json', {id: follower}, function(data) {
+                  sys.puts(sys.inspect(data));
+            });
         };
         
         

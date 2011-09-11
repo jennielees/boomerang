@@ -12,9 +12,17 @@ ObjectId = Schema.ObjectId;
 
 require('./models.js');
 Message = mongoose.model('Message');
+Response = mongoose.model('Message');
 Person  = mongoose.model('Person');
 Image  = mongoose.model('Image');
 Phone = mongoose.model('Phone');
+
+
+var c2dmAuthToken = "SID=DQAAALAAAAABtmkVV0Hy08uNFOvGZk1pkcjdSt9Uly0dfjdX9rnjIcujRWFWNDHMdHN9zV_MkNNX-VnNgjGebKJZUMtE74cDLC3ySYCw2k8sidznNnpjwxT-YnBU4bZN-KOUq8k7vof8WUk27X1Nr3WcFJX3rGptjSvTdwihPuVuxpRrHD86AKpDayUFOGo6NoGzyXKrcI9-Lo6XLO2coCHNIm4syLGPCUWriUPlB6K5dI5993fBJA\nLSID=DQAAALQAAABmqAJMDdSIDnI7uXZf0CtCdxt9x4aG3Wz4gzshHQ9c4ikkuEeul0nQwmDRZNgqGeZUc5NpqcOeVXPEuXM4Qhb8u_ZBzAZJNn0RNJgdLjzSPAEE3njVAFS2Cl97GVajP6SRmo0npmOmQhoG0szImGkUAbS05r0YdGlRldHaof2QrkdilWIJf2r-_FbJ5ch67Jv-NNOMjUizfV125G128YsqGyl1ffc4AXmwJ5Zvr68t55FDeBwtcLSvCrvUQf5nK\nNoAuth=DQAAALUAAACkRc9YtveLhivKjThzASgFdTbQ0luL-w4A3Lc38zlYGAg1Rp3Gq24h8SGVM6q788OvMy0xtwVoYOY7FLnyxVbrrNoYuqP7gszQfhFBWD5LSUFYSWXVXAcLD6MK9f4OCO7L56vuW5X6mink4q5xtMlEUyFgWzsnOEPN_DPFvWdqHLxDP4aVqWOQ-zgFQf8LW-rxE_CmpUEbV6GUst0xjtAW0iadxP4Z6_m_FY0sA30si_VMNLuhYkKRTLJ0cij21tI";
+//SID=DQAAALAAAAABtmkVV0Hy08uNFOvGZk1pkcjdSt9Uly0dfjdX9rnjIcujRWFWNDHMdHN9zV_MkNNX-VnNgjGebKJZUMtE74cDLC3ySYCw2k8sidznNnpjwxT-YnBU4bZN-KOUq8k7vof8WUk27X1Nr3WcFJX3rGptjSvTdwihPuVuxpRrHD86AKpDayUFOGo6NoGzyXKrcI9-Lo6XLO2coCHNIm4syLGPCUWriUPlB6K5dI5993fBJA
+//LSID=DQAAALQAAABmqAJMDdSIDnI7uXZf0CtCdxt9x4aG3Wz4gzshHQ9c4ikkuEeul0nQwmDRZNgqGeZUc5NpqcOeVXPEuXM4Qhb8u_ZBzAZJNn0RNJgdLjzSPAEE3njVAFS2Cl97GVajP6SRmo0npmOmQhoG0szImGkUAbS05r0YdGlRldHaof2QrkdilWIJf2r-_FbJ5ch67Jv-NNOMjUizfV125G128YsqGyl1ffc4AXmwJ5Zvr68t55FDeBwtcLSvCrvUQf5nKNo
+//Auth=DQAAALUAAACkRc9YtveLhivKjThzASgFdTbQ0luL-w4A3Lc38zlYGAg1Rp3Gq24h8SGVM6q788OvMy0xtwVoYOY7FLnyxVbrrNoYuqP7gszQfhFBWD5LSUFYSWXVXAcLD6MK9f4OCO7L56vuW5X6mink4q5xtMlEUyFgWzsnOEPN_DPFvWdqHLxDP4aVqWOQ-zgFQf8LW-rxE_CmpUEbV6GUst0xjtAW0iadxP4Z6_m_FY0sA30si_VMNLuhYkKRTLJ0cij21tI
+
 
 // now we have the db model
 // authenticate with tweeter
@@ -245,6 +253,32 @@ var getTwitterAccessToken = function(req, res){
 
 };
 
+var https = require('https');
+
+// send c2dm message
+var sendC2DM = function(data) {
+   // need phone as parameter eventually
+   // retrieve registration ID and authToken
+   var registrationID = "APA91bEgUQJeYCmKI5v43lEmdL-f0l2xA6I-EmH30depPC-5hvUqM4GzG6RoY38F6UyQ8rjAaqUQ3zoiKUVVssIpxfFyJjjTUwAqm9sihtsSZU2tRFZOICU";
+   var authToken = c2dmAuthToken;
+   
+   var collapse_key = "granny";
+   
+   var options = {
+      host: 'android.apis.google.com',
+      port: 443,
+      path: '/c2dm/send',
+      method: 'POST'
+   };
+   
+   var req = https.request(options, function(res) {
+      console.log("statusCode: ", res.statusCode);
+      console.log("headers: ", res.headers);
+      
+      res.write(); // FIXME
+   });
+   
+};
 
 
 twit.stream('user', {track:'nodejs'}, function(stream) {
@@ -339,6 +373,17 @@ app.post('/setClientToken', function(req, res) {
    device.registration_id = req.body.registration_id;
    device.save(function(err) { sys.puts("Error " + sys.inspect(err)) });
    res.send("OK\n"); //make a proper return code
+});
+
+// store message responses
+app.post('/messageResponse', function(req,res) {
+   sys.puts(req.body.messageID);
+   sys.puts(req.body.text);
+   response = new Response(); 
+   response.messageID = req.body.messageID;
+   response.text = req.body.text;
+   response.date = Date.now(); 
+   response.save(function(err) { sys.puts("Error " + sys.inspect(err)) });
 });
 
 

@@ -51,6 +51,13 @@ var MessageSchema = new Schema({
  , 	images   : [ImageSchema]
 });
 
+var ResponseSchema = new Schema({
+	messageID : ObjectId
+ , 	text      : String
+ , 	date      : Date
+});
+
+
 /*
    Schema for Image entries.
    Supports two methods: binary (in-db) or an external URL.

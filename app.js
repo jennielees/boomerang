@@ -384,6 +384,7 @@ app.post('/messageResponse', function(req,res) {
    response.text = req.body.text;
    response.date = Date.now(); 
    response.save(function(err) { sys.puts("Error " + sys.inspect(err)) });
+   res.send(req.body);
 });
 
 

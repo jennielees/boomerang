@@ -38,10 +38,16 @@ var oa= new OAuth("https://api.twitter.com/oauth/request_token",
 
 //get request token
 
-var betty_oauth_token = "366324004-JlULCi6dGy9tSDmGBLAOoKmIitO5xnRWbY8Nh5Nf";
-var betty_oauth_secret = "gOlAIe1ZFYOS6Tkbvuv5pjZ9w94fmyZywOokac0aTs";
-var betty_app_key = "43grfoUQVNysrXjsd694Kw";
-var betty_app_secret = "gF140SW9iEsmqT1N8Z69E5F00IMhwzbtFVA0fjFFWc";
+//var betty_oauth_token = "366324004-JlULCi6dGy9tSDmGBLAOoKmIitO5xnRWbY8Nh5Nf";
+//var betty_oauth_secret = "gOlAIe1ZFYOS6Tkbvuv5pjZ9w94fmyZywOokac0aTs";
+//var betty_app_key = "43grfoUQVNysrXjsd694Kw";
+//var betty_app_secret = "gF140SW9iEsmqT1N8Z69E5F00IMhwzbtFVA0fjFFWc";
+
+
+var betty_oauth_token = "372647766-ibQaKdKGkhJm9GSCo8NUzBvDd1Jjo3YFnLWDkiAn";
+var betty_oauth_secret = "dQHrHUmSOFCQCNCXyiH32qzF7YdEV3zxLj11exDQrc";
+var betty_app_key = "wbSjwF3tl1QQO6QhcizOA";
+var betty_app_secret = "xrkDnEGbivjXXKREYQ6rhccDyy36bQ1dLqHyMA";
 
 var twitter = require('twitter');
 

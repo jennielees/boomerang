@@ -277,12 +277,15 @@ var sendC2DM = function(data) {
       method: 'POST'
    };
    
+   
    var req = https.request(options, function(res) {
       console.log("statusCode: ", res.statusCode);
       console.log("headers: ", res.headers);
-      
       res.write(); // FIXME
    });
+   sys.puts("New message");   
+   req.write("New message");
+   req.end();
    
 };
 
@@ -308,7 +311,7 @@ twit.stream('user', {track:'nodejs'}, function(stream) {
            tweet = data.direct_message;
            sys.puts("Text: " + tweet.text);
            storeTweet(tweet);
-         
+           sendC2DM(tweet);
         }
     });
     // Disconnect stream after five seconds

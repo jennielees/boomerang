@@ -80,6 +80,7 @@ var PhoneSchema = new Schema({
  ,	authToken : String // ClientLogin token
  ,	registration_id : String // ClientLogin id
  , 	PIN 	  : String // User specific PIN. Check v enduser.
+ ,      timestamp : { type: Date, default: Date.now }
 });
 
 mongoose.model('EndUser', EndUserSchema);

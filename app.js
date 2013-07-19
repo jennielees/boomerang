@@ -17,15 +17,7 @@ Person  = mongoose.model('Person');
 Image  = mongoose.model('Image');
 Phone = mongoose.model('Phone');
 
-
-var c2dmAuthToken = "SID=DQAAALAAAAABtmkVV0Hy08uNFOvGZk1pkcjdSt9Uly0dfjdX9rnjIcujRWFWNDHMdHN9zV_MkNNX-VnNgjGebKJZUMtE74cDLC3ySYCw2k8sidznNnpjwxT-YnBU4bZN-KOUq8k7vof8WUk27X1Nr3WcFJX3rGptjSvTdwihPuVuxpRrHD86AKpDayUFOGo6NoGzyXKrcI9-Lo6XLO2coCHNIm4syLGPCUWriUPlB6K5dI5993fBJA\nLSID=DQAAALQAAABmqAJMDdSIDnI7uXZf0CtCdxt9x4aG3Wz4gzshHQ9c4ikkuEeul0nQwmDRZNgqGeZUc5NpqcOeVXPEuXM4Qhb8u_ZBzAZJNn0RNJgdLjzSPAEE3njVAFS2Cl97GVajP6SRmo0npmOmQhoG0szImGkUAbS05r0YdGlRldHaof2QrkdilWIJf2r-_FbJ5ch67Jv-NNOMjUizfV125G128YsqGyl1ffc4AXmwJ5Zvr68t55FDeBwtcLSvCrvUQf5nK\nNoAuth=DQAAALUAAACkRc9YtveLhivKjThzASgFdTbQ0luL-w4A3Lc38zlYGAg1Rp3Gq24h8SGVM6q788OvMy0xtwVoYOY7FLnyxVbrrNoYuqP7gszQfhFBWD5LSUFYSWXVXAcLD6MK9f4OCO7L56vuW5X6mink4q5xtMlEUyFgWzsnOEPN_DPFvWdqHLxDP4aVqWOQ-zgFQf8LW-rxE_CmpUEbV6GUst0xjtAW0iadxP4Z6_m_FY0sA30si_VMNLuhYkKRTLJ0cij21tI";
-//SID=DQAAALAAAAABtmkVV0Hy08uNFOvGZk1pkcjdSt9Uly0dfjdX9rnjIcujRWFWNDHMdHN9zV_MkNNX-VnNgjGebKJZUMtE74cDLC3ySYCw2k8sidznNnpjwxT-YnBU4bZN-KOUq8k7vof8WUk27X1Nr3WcFJX3rGptjSvTdwihPuVuxpRrHD86AKpDayUFOGo6NoGzyXKrcI9-Lo6XLO2coCHNIm4syLGPCUWriUPlB6K5dI5993fBJA
-//LSID=DQAAALQAAABmqAJMDdSIDnI7uXZf0CtCdxt9x4aG3Wz4gzshHQ9c4ikkuEeul0nQwmDRZNgqGeZUc5NpqcOeVXPEuXM4Qhb8u_ZBzAZJNn0RNJgdLjzSPAEE3njVAFS2Cl97GVajP6SRmo0npmOmQhoG0szImGkUAbS05r0YdGlRldHaof2QrkdilWIJf2r-_FbJ5ch67Jv-NNOMjUizfV125G128YsqGyl1ffc4AXmwJ5Zvr68t55FDeBwtcLSvCrvUQf5nKNo
-//Auth=DQAAALUAAACkRc9YtveLhivKjThzASgFdTbQ0luL-w4A3Lc38zlYGAg1Rp3Gq24h8SGVM6q788OvMy0xtwVoYOY7FLnyxVbrrNoYuqP7gszQfhFBWD5LSUFYSWXVXAcLD6MK9f4OCO7L56vuW5X6mink4q5xtMlEUyFgWzsnOEPN_DPFvWdqHLxDP4aVqWOQ-zgFQf8LW-rxE_CmpUEbV6GUst0xjtAW0iadxP4Z6_m_FY0sA30si_VMNLuhYkKRTLJ0cij21tI
-
-
-// now we have the db model
-// authenticate with tweeter
+// authenticate with twitter
 // and listen for tweets
 
 var oa= new OAuth("https://api.twitter.com/oauth/request_token",
@@ -36,18 +28,12 @@ var oa= new OAuth("https://api.twitter.com/oauth/request_token",
         null,
         "HMAC-SHA1");
 
-//get request token
+// get request token
 
-//var betty_oauth_token = "366324004-JlULCi6dGy9tSDmGBLAOoKmIitO5xnRWbY8Nh5Nf";
-//var betty_oauth_secret = "gOlAIe1ZFYOS6Tkbvuv5pjZ9w94fmyZywOokac0aTs";
-//var betty_app_key = "43grfoUQVNysrXjsd694Kw";
-//var betty_app_secret = "gF140SW9iEsmqT1N8Z69E5F00IMhwzbtFVA0fjFFWc";
-
-
-var betty_oauth_token = "372647766-ibQaKdKGkhJm9GSCo8NUzBvDd1Jjo3YFnLWDkiAn";
-var betty_oauth_secret = "dQHrHUmSOFCQCNCXyiH32qzF7YdEV3zxLj11exDQrc";
-var betty_app_key = "wbSjwF3tl1QQO6QhcizOA";
-var betty_app_secret = "xrkDnEGbivjXXKREYQ6rhccDyy36bQ1dLqHyMA";
+var betty_oauth_token = "REDACTED";
+var betty_oauth_secret = "REDACTED";
+var betty_app_key = "REDACTED";
+var betty_app_secret = "REDACTED";
 
 var twitter = require('twitter');
 

@@ -1,3 +1,18 @@
+/* Boomerang
+ * Server side simplified message passing
+ *
+ * Copyright Jennie Lees
+ * mail@jennielees.net
+ * 2011
+ *
+ * This file is publicly available since the code
+ * was never actively released, and probably doesn't
+ * work fully. The accessibility provides no guarantee
+ * against its functionality, but hopefully someone
+ * might find part of it useful somehow.
+ * 
+*/
+
 var sys = require('sys');
 var OAuth= require('./lib/oauth').OAuth;
 var journey = require('journey');
@@ -251,7 +266,7 @@ var https = require('https');
 var sendC2DM = function(data) {
    // need phone as parameter eventually
    // retrieve registration ID and authToken
-   var registrationID = "APA91bEgUQJeYCmKI5v43lEmdL-f0l2xA6I-EmH30depPC-5hvUqM4GzG6RoY38F6UyQ8rjAaqUQ3zoiKUVVssIpxfFyJjjTUwAqm9sihtsSZU2tRFZOICU";
+   var registrationID = "REDACTED";
    var authToken = c2dmAuthToken;
    
    var collapse_key = "granny";

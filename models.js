@@ -1,3 +1,18 @@
+* Boomerang
+ * Server side simplified message passing
+ *
+ * Copyright Jennie Lees
+ * mail@jennielees.net
+ * 2011
+ *
+ * This file is publicly available since the code
+ * was never actively released, and probably doesn't
+ * work fully. The accessibility provides no guarantee
+ * against its functionality, but hopefully someone
+ * might find part of it useful somehow.     
+ *
+*/
+
 /* End User schema: App user
    Different from Person schema due to simplified access control
    An EndUser can have many People supplying them with messages,
